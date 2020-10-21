@@ -3,4 +3,3 @@ if (MACHINE MATCHES ".*microblaze.*")
     return()
 endif (MACHINE MATCHES ".*microblaze.*")
 
-add_subdirectory (msg)

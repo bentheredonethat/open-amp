@@ -128,6 +128,12 @@ int load_exectuable_noblock(struct remoteproc *rproc,
 	}
 	LPRINTF("successfully started the processor\r\n");
 	/* ... */
+	ret = app_wrapper();
+	if (ret) {
+		LPRINTF("failed to run IPC demo\r\n");
+		return ret;
+	}
+
 	asm volatile("wfi");
 	LPRINTF("going to stop the processor\r\n");
 	remoteproc_stop(rproc);
