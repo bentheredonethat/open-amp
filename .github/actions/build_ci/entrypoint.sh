@@ -12,6 +12,10 @@ pre_build(){
 	echo 'Etc/UTC' > /etc/timezone || exit 1
 	ln -fs /usr/share/zoneinfo/Etc/UTC /etc/localtime || exit 1
 
+	# see how much space we have before
+	echo -e "\n\033[4mFree space before\033[0m:"
+	df -h .
+
 	#Create a new virtual environment
 	python3 -m venv ./.venv
 	source ./.venv/bin/activate
@@ -21,6 +25,13 @@ pre_build(){
 	apt update -qq || exit 1
 	apt-get install -qqy make curl || exit 1
 	pip3 install cmake || exit 1
+
+}
+
+post_build(){
+	# see how much space we have after we are done
+	echo -e "\n\033[4mFree space after\033[0m:"
+	df -h .
 }
 
 build_linux(){
@@ -48,7 +59,6 @@ build_linux(){
 		-DCMAKE_INSTALL_PREFIX=$PROJECT_ROOT/target  \
 		-DCMAKE_C_FLAGS="-Werror -Wall -Wextra -Wshadow -Wunused-but-set-variable" || exit 1
 	make -C build install || exit 1
-	exit 0
 }
 
 build_generic(){
@@ -68,7 +78,6 @@ build_generic(){
 	-DCMAKE_LIBRARY_PATH="$PROJECT_ROOT/libmetal/build-generic/lib" || exit 1
 	cd build-generic || exit 1
 	make VERBOSE=1 || exit 1
-	exit 0
 }
 
 build_freertos(){
@@ -80,7 +89,6 @@ build_freertos(){
 	cd build-freertos || exit 1
 	cmake .. -DCMAKE_TOOLCHAIN_FILE=template-freertos -DCMAKE_C_FLAGS="-I$PWD/../FreeRTOSv10.0.1/FreeRTOS/Source/include/ -I$PWD/../FreeRTOSv10.0.1/FreeRTOS/Demo/CORTEX_STM32F107_GCC_Rowley -I$PWD/../FreeRTOSv10.0.1/FreeRTOS/Source/portable/GCC/ARM_CM3" || exit 1
 	make VERBOSE=1 || exit 1
-	exit 0
 }
 
 build_zephyr(){
@@ -120,7 +128,6 @@ build_zephyr(){
 	rm -r build
 	echo  "build openamp_rsc_table sample"
 	west build  --sysbuild -b stm32mp157c_dk2 samples/subsys/ipc/openamp_rsc_table || exit 1
-	exit 0
 }
 
 main(){
@@ -143,6 +150,9 @@ main(){
 		ZEPHYR_VERSION=main
 		build_zephyr
 	fi
+
+	post_build
+	exit 0
 }
 
 main

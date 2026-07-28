@@ -17,6 +17,9 @@ on:
       - cmake/**
       - scripts/**
 
+  # Allows you to run this workflow manually from the Actions tab or gh API
+  workflow_dispatch:
+
 jobs:
   platform_builds:
     name: check builds on different platforms
