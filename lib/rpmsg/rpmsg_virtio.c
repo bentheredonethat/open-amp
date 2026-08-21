@@ -231,6 +231,8 @@ static void *rpmsg_virtio_get_rx_buffer(struct rpmsg_virtio_device *rvdev,
 
 	if (VIRTIO_ROLE_IS_DRIVER(rvdev->vdev)) {
 		data = virtqueue_get_buffer(rvdev->rvq, len, idx);
+		if (data && *len > rvdev->config.r2h_buf_size)
+			*len = rvdev->config.r2h_buf_size;
 	}
 
 	if (VIRTIO_ROLE_IS_DEVICE(rvdev->vdev)) {
@@ -576,6 +578,17 @@ static void rpmsg_virtio_rx_callback(struct virtqueue *vq)
 				virtqueue_kick(rvdev->rvq);
 			metal_mutex_release(&rdev->lock);
 			break;
+		}
+		if (len < sizeof(*rp_hdr) ||
+		    rp_hdr->len > len - sizeof(*rp_hdr)) {
+			len = virtqueue_get_buffer_length(rvdev->rvq, idx);
+			rpmsg_virtio_return_buffer(rvdev, rp_hdr, len, idx);
+			if (VIRTIO_ENABLED(VQ_RX_EMPTY_NOTIFY))
+				release = true;
+			else
+				virtqueue_kick(rvdev->rvq);
+			metal_mutex_release(&rdev->lock);
+			continue;
 		}
 
 		rp_hdr->reserved = idx;
