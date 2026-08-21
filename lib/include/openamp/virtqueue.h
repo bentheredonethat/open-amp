@@ -141,7 +141,10 @@ struct vring_alloc_info {
 	/** Vring address. */
 	void *vaddr;
 
-	/** Vring alignment. */
+	/**
+	 * Vring alignment; must be a nonzero power of two.
+	 * Zero makes vring_init() calculate a NULL used-ring pointer.
+	 */
 	uint32_t align;
 
 	/** Number of descriptors in the vring. */

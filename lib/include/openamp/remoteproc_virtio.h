@@ -24,6 +24,18 @@ extern "C" {
 /* maximum number of vring descriptors for a vdev limited by 16-bit data type */
 #define	RPROC_MAX_VRING_DESC	USHRT_MAX
 
+/**
+ * @brief Validate a remoteproc vring alignment.
+ *
+ * @param align	Vring alignment supplied by the resource table.
+ *
+ * @return true if the alignment is supported, otherwise false.
+ */
+static inline bool rproc_virtio_vring_align_valid(unsigned int align)
+{
+	return align != 0 && (align & (align - 1)) == 0;
+}
+
 /* cache invalidation helpers for resource table */
 #if defined(VIRTIO_USE_DCACHE)
 #define RSC_TABLE_FLUSH(x, s)		metal_cache_flush(x, s)
@@ -94,7 +106,7 @@ void rproc_virtio_remove_vdev(struct virtio_device *vdev);
  * @param va		vring virtual address
  * @param io		Pointer to vring I/O region
  * @param num_descs	Number of descriptors
- * @param align		vring alignment
+ * @param align		Nonzero power-of-two vring alignment
  *
  * @return 0 for success, negative value for failure.
  */

@@ -1013,6 +1013,9 @@ remoteproc_create_virtio(struct remoteproc *rproc,
 		da = vring_rsc->da;
 		num_descs = vring_rsc->num;
 		align = vring_rsc->align;
+		/* Validate the peer alignment before calculating the size. */
+		if (!rproc_virtio_vring_align_valid(align))
+			goto err1;
 		size = vring_size(num_descs, align);
 		va = remoteproc_mmap(rproc, NULL, &da, size, 0, &io);
 		if (!va)
