@@ -132,22 +132,18 @@ static int elf_shstrndx(const void *elf_info)
 static int elf_validate_table_entry_sizes(const void *elf_info)
 {
 	if (elf_is_64(elf_info) == 0) {
-		const Elf32_Ehdr *ehdr = elf_info;
+		const struct elf32_info *einfo = elf_info;
 
-		if (ehdr->e_phnum != 0 &&
-		    ehdr->e_phentsize != sizeof(Elf32_Phdr))
+		if (einfo->ehdr.e_phnum != 0 && einfo->ehdr.e_phentsize != sizeof(*einfo->phdrs))
 			return -RPROC_EINVAL;
-		if (ehdr->e_shnum != 0 &&
-		    ehdr->e_shentsize != sizeof(Elf32_Shdr))
+		if (einfo->ehdr.e_shnum != 0 && einfo->ehdr.e_shentsize != sizeof(*einfo->shdrs))
 			return -RPROC_EINVAL;
 	} else {
-		const Elf64_Ehdr *ehdr = elf_info;
+		const struct elf64_info *einfo = elf_info;
 
-		if (ehdr->e_phnum != 0 &&
-		    ehdr->e_phentsize != sizeof(Elf64_Phdr))
+		if (einfo->ehdr.e_phnum != 0 && einfo->ehdr.e_phentsize != sizeof(*einfo->phdrs))
 			return -RPROC_EINVAL;
-		if (ehdr->e_shnum != 0 &&
-		    ehdr->e_shentsize != sizeof(Elf64_Shdr))
+		if (einfo->ehdr.e_shnum != 0 && einfo->ehdr.e_shentsize != sizeof(*einfo->shdrs))
 			return -RPROC_EINVAL;
 	}
 
