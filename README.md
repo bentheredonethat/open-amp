@@ -148,7 +148,7 @@ instead of the full license text in the individual files:
 ### Signed-off-by
 Commit message must contain Signed-off-by: line and your email must match the change authorship
 information. Make sure your .gitconfig is set up correctly:
-  ```
+  ```shell
   git config --global user.name "first-name Last-Namer"
   git config --global user.email "yourmail@company.com"
   ```
@@ -175,7 +175,7 @@ Before you submit a pull request to the project, verify your commit messages mee
 The check can be  performed locally using the the gitlint command.
 
 Run gitlint locally in your tree and branch where your patches have been committed:
-  ```
+  ```shell
   gitlint
   ```
 Note, gitlint only checks HEAD (the most recent commit), so you should run it after each commit, or
@@ -191,7 +191,7 @@ The Linux kernel GPL-licensed tool checkpatch is used to check coding style conf
 available in the scripts directory.
 
 To check your \<n\> commits in your git branch:
-  ```
+  ```shell
   ./scripts/checkpatch.pl --strict  -g HEAD-<n>
   ```
 ### Send a pull request
